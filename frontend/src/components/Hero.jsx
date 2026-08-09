@@ -1,12 +1,33 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useRef } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scrollProgress } from "../utils/scrollProgress";
 import "../styles/hero.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const HeroScene = lazy(() => import("../3d/HeroScene"));
 
 export default function Hero() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const trigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top top",
+      end: "bottom top",
+      scrub: true,
+      onUpdate: (self) => {
+        scrollProgress.current = self.progress;
+      },
+    });
+
+    return () => trigger.kill();
+  }, []);
+
   return (
-    <section id="home" className="hero">
+    <section id="home" className="hero" ref={sectionRef}>
       <div className="hero__canvas">
         <Suspense fallback={null}>
           <HeroScene />

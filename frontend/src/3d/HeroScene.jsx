@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Environment, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
+import { scrollProgress } from "../utils/scrollProgress";
 
 /* A two-tone capsule built from a cylinder body + two sphere caps,
    avoiding CapsuleGeometry for broad three.js version compatibility. */
@@ -95,12 +96,23 @@ function Bond({ from, to }) {
   );
 }
 
+/* Camera drifts ambiently, and pushes forward + tilts down as the user
+   scrolls through the hero section (driven by GSAP ScrollTrigger via
+   the shared scrollProgress ref — no React re-renders on scroll). */
 function Rig() {
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    state.camera.position.x = Math.sin(t * 0.08) * 0.6;
-    state.camera.position.y = 0.2 + Math.cos(t * 0.06) * 0.25;
-    state.camera.lookAt(0, 0, 0);
+    const p = scrollProgress.current; // 0 -> 1 across the hero section
+
+    const driftX = Math.sin(t * 0.08) * 0.6;
+    const driftY = 0.2 + Math.cos(t * 0.06) * 0.25;
+
+    state.camera.position.x = driftX;
+    state.camera.position.y = driftY - p * 0.6;
+    state.camera.position.z = 6.5 - p * 2.6;
+    state.camera.fov = 42 + p * 6;
+    state.camera.updateProjectionMatrix();
+    state.camera.lookAt(0, -p * 0.3, 0);
   });
   return null;
 }

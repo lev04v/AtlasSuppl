@@ -15,19 +15,41 @@ const FACES = [
 const BATCH_SIZE = 6;
 const CYCLE_MS = 2800;
 
-function CubeFace({ face, label }) {
+function CubeFace({ face, partner, hovered, onHover, onUnhover, onClick }) {
+  if (!partner) return null;
+
   return (
     <group position={face.position} rotation={face.rotation}>
+      {/* invisible larger plane widens the hit area beyond the text glyphs */}
+      <mesh
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          onHover();
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          onUnhover();
+          document.body.style.cursor = "auto";
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(partner.url);
+        }}
+      >
+        <planeGeometry args={[1.9, 1.9]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
       <Text
-        fontSize={0.16}
+        fontSize={hovered ? 0.19 : 0.16}
         maxWidth={1.4}
         textAlign="center"
         anchorX="center"
         anchorY="middle"
-        color="#0a1612"
-        font={undefined}
+        color={hovered ? "#0f766e" : "#0a1612"}
       >
-        {label}
+        {partner.name}
       </Text>
     </group>
   );
@@ -35,6 +57,9 @@ function CubeFace({ face, label }) {
 
 function Cube({ batchIndex }) {
   const group = useRef();
+  const [hoveredFace, setHoveredFace] = useState(null);
+  const isHovering = hoveredFace !== null;
+
   const batches = useMemo(() => {
     const chunks = [];
     for (let i = 0; i < partners.length; i += BATCH_SIZE) {
@@ -46,9 +71,16 @@ function Cube({ batchIndex }) {
   const current = batches[batchIndex % batches.length];
 
   useFrame((state, delta) => {
-    group.current.rotation.y += delta * 0.35;
+    // Pause the spin while a face is being hovered so it's easy to click.
+    if (!isHovering) {
+      group.current.rotation.y += delta * 0.35;
+    }
     group.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.15;
   });
+
+  const openPartner = (url) => {
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <group ref={group}>
@@ -56,7 +88,15 @@ function Cube({ batchIndex }) {
         <meshStandardMaterial color="#e4c766" roughness={0.35} metalness={0.15} />
       </RoundedBox>
       {FACES.map((face, i) => (
-        <CubeFace key={i} face={face} label={current[i]?.name ?? ""} />
+        <CubeFace
+          key={i}
+          face={face}
+          partner={current[i]}
+          hovered={hoveredFace === i}
+          onHover={() => setHoveredFace(i)}
+          onUnhover={() => setHoveredFace((h) => (h === i ? null : h))}
+          onClick={openPartner}
+        />
       ))}
     </group>
   );
