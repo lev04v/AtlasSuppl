@@ -3,7 +3,7 @@
   min-height: 100svh;
   display: flex;
   align-items: center;
-  background: radial-gradient(120% 90% at 50% 0%, #12241d 0%, #0a1612 60%);
+  background: radial-gradient(120% 90% at 50% 0%, #16204f 0%, var(--color-bg) 60%);
   overflow: hidden;
 }
 
@@ -21,9 +21,9 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(10, 22, 18, 0.15) 0%,
-    rgba(10, 22, 18, 0.55) 65%,
-    #0a1612 100%
+    rgba(7, 10, 26, 0.15) 0%,
+    rgba(7, 10, 26, 0.55) 65%,
+    var(--color-bg) 100%
   );
   pointer-events: none;
 }
@@ -46,7 +46,7 @@
 }
 
 .hero__headline span {
-  color: var(--color-gold-soft);
+  color: var(--color-teal);
   font-style: italic;
 }
 

@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import "../styles/navbar.css";
 
+/* These are placeholders for now — clicking them does nothing on purpose.
+   Once each of these becomes its own real page/route, swap `disabled`
+   for a real `href`/`to` and this component needs no other changes. */
 const LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Our Supplies", href: "#supplies" },
-  { label: "Our Partners", href: "#partners" },
-  { label: "Director's Desk", href: "#director" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", disabled: false, href: "#home" },
+  { label: "About", disabled: true },
+  { label: "Our Supplies", disabled: true },
+  { label: "Our Partners", disabled: true },
+  { label: "Latest News", disabled: true },
+  { label: "Partner With Us", disabled: true },
 ];
 
 export default function Navbar() {
@@ -21,10 +24,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const handleClick = (e, link) => {
+    if (link.disabled) e.preventDefault();
+    setOpen(false);
+  };
+
   return (
     <header className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
       <div className="navbar__inner container">
-        <a href="#home" className="navbar__brand">
+        <a href="#home" className="navbar__brand" onClick={(e) => handleClick(e, { disabled: false })}>
           <span className="navbar__brand-mark">WC</span>
           <span className="navbar__brand-name">
             Wellness <em>CureCare</em>
@@ -33,13 +41,18 @@ export default function Navbar() {
 
         <nav className="navbar__links">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href}>
+            <a
+              key={link.label}
+              href={link.href ?? "#"}
+              className={link.disabled ? "is-disabled" : ""}
+              onClick={(e) => handleClick(e, link)}
+            >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <a href="#contact" className="btn btn--primary navbar__cta">
+        <a href="#" className="btn btn--primary navbar__cta" onClick={(e) => handleClick(e, { disabled: true })}>
           Partner With Us
         </a>
 
@@ -55,13 +68,15 @@ export default function Navbar() {
       {open && (
         <div className="navbar__mobile">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+            <a
+              key={link.label}
+              href={link.href ?? "#"}
+              className={link.disabled ? "is-disabled" : ""}
+              onClick={(e) => handleClick(e, link)}
+            >
               {link.label}
             </a>
           ))}
-          <a href="#contact" className="btn btn--primary" onClick={() => setOpen(false)}>
-            Partner With Us
-          </a>
         </div>
       )}
     </header>

@@ -8,7 +8,9 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Anchor-jump scrolling is intentionally off — nav links don't auto-scroll
+     the page right now (see Navbar.jsx). Re-enable when nav goes to real routes. */
+  scroll-behavior: auto;
 }
 
 body {
@@ -55,11 +57,11 @@ img {
   font-size: var(--fs-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-gold-deep);
+  color: var(--color-blue-deep);
 }
 
 .section--dark .eyebrow {
-  color: var(--color-gold-soft);
+  color: var(--color-teal);
 }
 
 .section {
@@ -92,12 +94,12 @@ img {
 }
 
 .btn--primary {
-  background: var(--color-gold);
-  color: #14100a;
+  background: linear-gradient(120deg, var(--color-blue) 0%, var(--color-purple) 100%);
+  color: #ffffff;
 }
 
 .btn--primary:hover {
-  background: var(--color-gold-soft);
+  background: linear-gradient(120deg, var(--color-purple) 0%, var(--color-blue) 100%);
 }
 
 .btn--ghost {
@@ -112,9 +114,6 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

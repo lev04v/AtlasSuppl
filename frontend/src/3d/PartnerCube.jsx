@@ -1,26 +1,48 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Text, RoundedBox, Environment } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Text, RoundedBox, Float } from "@react-three/drei";
 import { partners } from "../utils/partnersData";
 
-const FACES = [
-  { position: [0, 0, 1.01], rotation: [0, 0, 0] },
-  { position: [0, 0, -1.01], rotation: [0, Math.PI, 0] },
-  { position: [1.01, 0, 0], rotation: [0, Math.PI / 2, 0] },
-  { position: [-1.01, 0, 0], rotation: [0, -Math.PI / 2, 0] },
-  { position: [0, 1.01, 0], rotation: [-Math.PI / 2, 0, 0] },
-  { position: [0, -1.01, 0], rotation: [Math.PI / 2, 0, 0] },
+const COORDS = [-1, 0, 1];
+const FACE_DEFS = [
+  { axis: "x", dir: 1, position: [0.51, 0, 0], rotation: [0, Math.PI / 2, 0] },
+  { axis: "x", dir: -1, position: [-0.51, 0, 0], rotation: [0, -Math.PI / 2, 0] },
+  { axis: "y", dir: 1, position: [0, 0.51, 0], rotation: [-Math.PI / 2, 0, 0] },
+  { axis: "y", dir: -1, position: [0, -0.51, 0], rotation: [Math.PI / 2, 0, 0] },
+  { axis: "z", dir: 1, position: [0, 0, 0.51], rotation: [0, 0, 0] },
+  { axis: "z", dir: -1, position: [0, 0, -0.51], rotation: [0, Math.PI, 0] },
 ];
 
-const BATCH_SIZE = 6;
-const CYCLE_MS = 2800;
+/* Build the 26 outer cubies (skip the hidden centre) and, for each,
+   the list of faces that actually sit on the cube's outer shell. */
+function buildCubies() {
+  const cubies = [];
+  let stickerCursor = 0;
 
-function CubeFace({ face, partner, hovered, onHover, onUnhover, onClick }) {
-  if (!partner) return null;
+  for (const x of COORDS) {
+    for (const y of COORDS) {
+      for (const z of COORDS) {
+        if (x === 0 && y === 0 && z === 0) continue;
 
+        const faces = FACE_DEFS.filter((f) => {
+          const coord = { x, y, z }[f.axis];
+          return coord === f.dir;
+        }).map((f) => {
+          const partner = partners[stickerCursor % partners.length];
+          stickerCursor += 1;
+          return { ...f, partner };
+        });
+
+        cubies.push({ x, y, z, faces });
+      }
+    }
+  }
+  return cubies;
+}
+
+function Sticker({ face, hovered, onHover, onUnhover, onClick }) {
   return (
     <group position={face.position} rotation={face.rotation}>
-      {/* invisible larger plane widens the hit area beyond the text glyphs */}
       <mesh
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -34,64 +56,48 @@ function CubeFace({ face, partner, hovered, onHover, onUnhover, onClick }) {
         }}
         onClick={(e) => {
           e.stopPropagation();
-          onClick(partner.url);
+          onClick(face.partner.url);
         }}
       >
-        <planeGeometry args={[1.9, 1.9]} />
-        <meshBasicMaterial transparent opacity={0} />
+        <planeGeometry args={[0.86, 0.86]} />
+        <meshStandardMaterial
+          color={hovered ? "#2dd4c8" : "#ffffff"}
+          emissive={hovered ? "#0e9488" : "#000000"}
+          emissiveIntensity={hovered ? 0.5 : 0}
+          roughness={0.4}
+        />
       </mesh>
-
       <Text
-        fontSize={hovered ? 0.19 : 0.16}
-        maxWidth={1.4}
+        position={[0, 0, 0.01]}
+        fontSize={hovered ? 0.115 : 0.1}
+        maxWidth={0.75}
         textAlign="center"
         anchorX="center"
         anchorY="middle"
-        color={hovered ? "#0f766e" : "#0a1612"}
+        color="#10142e"
+        sdfGlyphSize={24}
       >
-        {partner.name}
+        {face.partner.name}
       </Text>
     </group>
   );
 }
 
-function Cube({ batchIndex }) {
-  const group = useRef();
+function Cubie({ cubie }) {
   const [hoveredFace, setHoveredFace] = useState(null);
-  const isHovering = hoveredFace !== null;
-
-  const batches = useMemo(() => {
-    const chunks = [];
-    for (let i = 0; i < partners.length; i += BATCH_SIZE) {
-      chunks.push(partners.slice(i, i + BATCH_SIZE));
-    }
-    return chunks;
-  }, []);
-
-  const current = batches[batchIndex % batches.length];
-
-  useFrame((state, delta) => {
-    // Pause the spin while a face is being hovered so it's easy to click.
-    if (!isHovering) {
-      group.current.rotation.y += delta * 0.35;
-    }
-    group.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.15;
-  });
-
   const openPartner = (url) => {
     if (url) window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <group ref={group}>
-      <RoundedBox args={[2, 2, 2]} radius={0.08} smoothness={4}>
-        <meshStandardMaterial color="#e4c766" roughness={0.35} metalness={0.15} />
+    <group position={[cubie.x * 1.06, cubie.y * 1.06, cubie.z * 1.06]}>
+      <RoundedBox args={[1, 1, 1]} radius={0.06} smoothness={3}>
+        <meshStandardMaterial color="#131a3d" roughness={0.5} metalness={0.1} />
       </RoundedBox>
-      {FACES.map((face, i) => (
-        <CubeFace
+      {cubie.faces.map((face, i) => (
+        <Sticker
           key={i}
           face={face}
-          partner={current[i]}
           hovered={hoveredFace === i}
           onHover={() => setHoveredFace(i)}
           onUnhover={() => setHoveredFace((h) => (h === i ? null : h))}
@@ -102,28 +108,77 @@ function Cube({ batchIndex }) {
   );
 }
 
-export default function PartnerCube({ onBatchChange }) {
-  const [batchIndex, setBatchIndex] = useState(0);
-  const batchCount = Math.ceil(partners.length / BATCH_SIZE);
+/* Three horizontal layers, alternating spin direction — top and bottom
+   share a direction, the middle layer spins the opposite way, echoing
+   a Rubik's cube layer-turn without full multi-axis face-turn state. */
+function Layer({ cubies, direction, speed }) {
+  const ref = useRef();
+  useFrame((state, delta) => {
+    ref.current.rotation.y += delta * speed * direction;
+  });
+  return (
+    <group ref={ref}>
+      {cubies.map((c, i) => (
+        <Cubie key={i} cubie={c} />
+      ))}
+    </group>
+  );
+}
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setBatchIndex((i) => {
-        const next = (i + 1) % batchCount;
-        onBatchChange?.(next);
-        return next;
-      });
-    }, CYCLE_MS);
-    return () => clearInterval(id);
-  }, [batchCount, onBatchChange]);
+function RubikCube() {
+  const cubies = useMemo(buildCubies, []);
+  const byLayer = useMemo(
+    () => ({
+      top: cubies.filter((c) => c.y === 1),
+      mid: cubies.filter((c) => c.y === 0),
+      bottom: cubies.filter((c) => c.y === -1),
+    }),
+    [cubies]
+  );
 
   return (
-    <Canvas camera={{ position: [3.4, 2.2, 3.4], fov: 40 }} dpr={[1, 1.8]}>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 4, 2]} intensity={1.3} color="#fff3d6" />
-      <pointLight position={[-3, -1, -2]} intensity={1} color="#2dd4bf" />
-      <Cube batchIndex={batchIndex} />
-      <Environment preset="studio" />
+    <Float speed={1} rotationIntensity={0.15} floatIntensity={0.4}>
+      <group rotation={[0.35, 0.6, 0]}>
+        <Layer cubies={byLayer.top} direction={1} speed={0.22} />
+        <Layer cubies={byLayer.mid} direction={-1} speed={0.16} />
+        <Layer cubies={byLayer.bottom} direction={1} speed={0.22} />
+      </group>
+    </Float>
+  );
+}
+
+function ContextGuard() {
+  const { gl } = useThree();
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const onLost = (e) => {
+      e.preventDefault();
+      console.warn("Partner cube WebGL context lost — will attempt to restore.");
+    };
+    const onRestored = () => console.info("Partner cube WebGL context restored.");
+    canvas.addEventListener("webglcontextlost", onLost, false);
+    canvas.addEventListener("webglcontextrestored", onRestored, false);
+    return () => {
+      canvas.removeEventListener("webglcontextlost", onLost);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
+    };
+  }, [gl]);
+  return null;
+}
+
+export default function PartnerCube() {
+  return (
+    <Canvas
+      camera={{ position: [4.6, 3.4, 4.6], fov: 38 }}
+      dpr={[1, 1]}
+      gl={{ antialias: false, powerPreference: "default" }}
+    >
+      <ambientLight intensity={0.65} />
+      <directionalLight position={[3, 5, 2]} intensity={1.3} color="#dfe6ff" />
+      <pointLight position={[-4, -1, -3]} intensity={1.8} color="#7c5cff" />
+      <pointLight position={[4, 1, 3]} intensity={1.6} color="#2dd4c8" />
+      <RubikCube />
+      <ContextGuard />
     </Canvas>
   );
 }

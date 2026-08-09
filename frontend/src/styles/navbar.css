@@ -101,3 +101,12 @@
     display: block;
   }
 }
+
+.navbar__links a.is-disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.navbar__links a.is-disabled:hover {
+  color: var(--color-ink-muted);
+}
