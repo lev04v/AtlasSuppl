@@ -1,27 +1,2 @@
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import ImageSlideshow from "../components/ImageSlideshow";
-import CompanyIntro from "../components/CompanyIntro";
-import ProductUniverse from "../components/ProductUniverse";
-import OurPartners from "../components/OurPartners";
-import WhyUs from "../components/WhyUs";
-import LatestNews from "../components/LatestNews";
-import PartnerWithUs from "../components/PartnerWithUs";
-import Footer from "../components/Footer";
-
-export default function Home() {
-  return (
-    <>
-      <Navbar />
-      <Hero />
-      <ImageSlideshow />
-      <CompanyIntro />
-      <ProductUniverse />
-      <OurPartners />
-      <WhyUs />
-      <LatestNews />
-      <PartnerWithUs />
-      <Footer />
-    </>
-  );
-}
+import Header from "../components/Header"; import Hero from "../components/Hero"; import StoryCarousel from "../components/StoryCarousel"; import Products from "../components/Products"; import Partners from "../components/Partners"; import Reasons from "../components/Reasons"; import ContactFooter from "../components/ContactFooter";
+export default function Home(){return <><Header/><main><Hero/><StoryCarousel/><Products/><Partners/><Reasons/><section className="insights section" id="insights"><p className="eyebrow">Insights / company updates</p><h2>Updates, when they are ready to be shared.</h2><p>We will publish approved company and category updates here.</p></section></main><ContactFooter/></>}
