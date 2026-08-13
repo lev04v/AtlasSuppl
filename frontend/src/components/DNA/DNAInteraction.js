@@ -1,0 +1,1 @@
+import {useFrame} from "@react-three/fiber";export default function DNAInteraction({target}){useFrame((s,d)=>{if(target.current){target.current.rotation.z+=d*.09;target.current.rotation.y+=(s.pointer.x*.16-target.current.rotation.y)*d;target.current.rotation.x+=(s.pointer.y*.1-target.current.rotation.x)*d}});return null}
