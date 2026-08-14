@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Sparkles, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import DNAInteraction from "./DNAInteraction";
 import { CLUSTER_BUBBLES, createDNAClusters } from "./DNAHelix";
@@ -85,9 +85,30 @@ function Scene() {
 }
 
 export default function DNA() {
+  const containerRef = useRef(null);
+  // Starts true so the model on first paint doesn't flash frozen; the observer
+  // corrects this within a frame or two for anything not actually in view.
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.01, rootMargin: "150px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="dna-canvas" aria-label={`Interactive molecular DNA model with ${CLUSTER_BUBBLES}-bubble clusters`}>
-      <Canvas camera={{ position: [0, 0, 15.2], fov: 42 }} dpr={[1, 1]} gl={{ antialias: true, alpha: true }}>
+    <div ref={containerRef} className="dna-canvas" aria-label={`Interactive molecular DNA model with ${CLUSTER_BUBBLES}-bubble clusters`}>
+      <Canvas
+        frameloop={isVisible ? "always" : "never"}
+        camera={{ position: [0, 0, 15.2], fov: 42 }}
+        dpr={[1, 1]}
+        gl={{ antialias: true, alpha: true }}
+      >
         <ambientLight intensity={1.15} color="#ffffff" />
         <hemisphereLight intensity={1.1} color="#ffffff" groundColor="#c1d5ff" />
         <directionalLight position={[4, 5, 6]} intensity={5.5} color="#ffffff" />
