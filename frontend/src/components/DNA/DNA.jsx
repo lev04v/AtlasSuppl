@@ -30,9 +30,6 @@ function BubbleInstances({ points, color, radius, seed = 0, glow = BLUE_GLOW, gl
         clearcoat: 1,
         clearcoatRoughness: 0.02,
         reflectivity: 1,
-        transmission: 0.12,
-        thickness: 0.5,
-        ior: 1.4,
         envMapIntensity: 1.5,
       }),
     [color, glow, glowIntensity]

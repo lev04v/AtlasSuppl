@@ -1,10 +1,10 @@
 import { ArrowRight, BadgeCheck, CheckCircle2, Headset, Truck } from "lucide-react";
-import drugsMedicinesCard from "../assets/products/drugs-medicines-card.jpg";
-import laboratoryEquipmentCard from "../assets/products/laboratory-equipment-card.jpg";
-import orthopedicSoftGoodsCard from "../assets/products/orthopedic-soft-goods-card.jpg";
-import surgicalConsumablesCard from "../assets/products/surgical-consumables-card.jpg";
-import hospitalEquipmentCard from "../assets/products/hospital-equipment-card.jpg";
-import nutritionIvTherapyCard from "../assets/products/nutrition-iv-therapy-card.jpg";
+import drugsMedicinesCard from "../assets/products/drugs.png";
+import laboratoryEquipmentCard from "../assets/products/lab.png";
+import orthopedicSoftGoodsCard from "../assets/products/orthopedic.png";
+import surgicalConsumablesCard from "../assets/products/surgical.png";
+import hospitalEquipmentCard from "../assets/products/hospital.png";
+import nutritionIvTherapyCard from "../assets/products/lvnutrition.png";
 import "../styles/products.css";
 
 const productCards = [
@@ -120,7 +120,13 @@ export default function Products() {
                 <h3>{card.title.map((line) => <span key={line}>{line}</span>)}</h3>
                 <p>{card.description}</p>
               </div>
-              <img className="product-card__image" src={card.image} alt={card.alt} />
+              <img
+                className="product-card__image"
+                src={card.image}
+                alt={card.alt}
+                loading="lazy"
+                decoding="async"
+              />
               <a className="product-card__action" href="#contact" aria-label={`Enquire about ${card.alt}`}>
                 <ArrowRight size={16} strokeWidth={2.4} />
               </a>
