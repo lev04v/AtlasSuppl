@@ -87,7 +87,7 @@ function Scene() {
 export default function DNA() {
   return (
     <div className="dna-canvas" aria-label={`Interactive molecular DNA model with ${CLUSTER_BUBBLES}-bubble clusters`}>
-      <Canvas camera={{ position: [0, 0, 15.2], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
+      <Canvas camera={{ position: [0, 0, 15.2], fov: 42 }} dpr={[1, 1]} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={1.15} color="#ffffff" />
         <hemisphereLight intensity={1.1} color="#ffffff" groundColor="#c1d5ff" />
         <directionalLight position={[4, 5, 6]} intensity={5.5} color="#ffffff" />
@@ -96,7 +96,7 @@ export default function DNA() {
         <Environment preset="studio" background={false} />
         <Scene />
         <EffectComposer>
-          <Bloom intensity={0.55} luminanceThreshold={0.35} luminanceSmoothing={0.9} mipmapBlur />
+          <Bloom intensity={0.55} luminanceThreshold={0.35} luminanceSmoothing={0.9} />
         </EffectComposer>
       </Canvas>
     </div>

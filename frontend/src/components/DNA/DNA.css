@@ -4,19 +4,11 @@
   overflow: hidden;
   touch-action: none;
   cursor: grab;
-  background: #fff;
+  background: #f5f8ff;
 }
 
 .dna-canvas:active {
   cursor: grabbing;
-}
-
-.dna-canvas:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 76% 50%, rgba(190, 221, 255, 0.4), rgba(255, 236, 249, 0.18) 40%, transparent 65%);
-  pointer-events: none;
 }
 
 .dna-canvas canvas {
