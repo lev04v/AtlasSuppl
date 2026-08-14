@@ -4,7 +4,7 @@ import laboratoryEquipmentCard from "../assets/products/lab.png";
 import orthopedicSoftGoodsCard from "../assets/products/orthopedic.png";
 import surgicalConsumablesCard from "../assets/products/surgical.png";
 import hospitalEquipmentCard from "../assets/products/hospital.png";
-import nutritionIvTherapyCard from "../assets/products/lvnutrition.png";
+import nutritionIvTherapyCard from "../assets/products/Ivnutrition.png";
 import "../styles/products.css";
 
 const productCards = [
