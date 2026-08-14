@@ -3,7 +3,6 @@ import { Sparkles, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import DNAParticles from "./DNAParticles.jsx";
 import DNAInteraction from "./DNAInteraction";
 import { CLUSTER_BUBBLES, createDNAClusters } from "./DNAHelix";
 import "./DNA.css";
@@ -80,7 +79,6 @@ function Scene() {
       <group ref={rig} position={[0, 0, 0]}>
         <ClusterDNA />
       </group>
-      <DNAParticles smokeTarget={smoke} />
       <Sparkles count={120} scale={[22, 8, 5]} size={1.1} speed={0.18} color="#9cd3ff" noise={1.5} />
     </>
   );

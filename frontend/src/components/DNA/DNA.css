@@ -15,7 +15,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 76% 50%, rgba(190, 221, 255, 0.2), transparent 52%);
+  background: radial-gradient(ellipse at 76% 50%, rgba(190, 221, 255, 0.4), rgba(255, 236, 249, 0.18) 40%, transparent 65%);
   pointer-events: none;
 }
 
