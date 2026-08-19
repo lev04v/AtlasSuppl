@@ -5,7 +5,7 @@ import institutional from "../assets/slides/institutional.jpg";
 import surgical from "../assets/slides/surgical.jpg";
 import meril from "../assets/partners/meril.png"; import tuberen from "../assets/partners/tuberen.png"; import smith from "../assets/partners/smith-nephew.png"; import abbott from "../assets/partners/abbott.png"; import healthium from "../assets/partners/healthium.png"; import aurolab from "../assets/partners/aurolab.png"; import bbraun from "../assets/partners/bbraun.png"; import merck from "../assets/partners/merck.png"; import ti from "../assets/partners/ti-medical.png"; import cardinal from "../assets/partners/cardinal.png"; import otsuka from "../assets/partners/otsuka.png"; import bayer from "../assets/partners/bayer.png";
 export const slides=[
- {image:scope, label:"Company introduction",title:"A commercial bridge for medical supply.",text:"Wellness CureCare sources from manufacturers and supplies business buyers with clarity and care."},
+ {image:scope, label:"Company introduction",title:"A commercial bridge for medical supply.",text:"Atlas Supply sources from manufacturers and supplies business buyers with clarity and care."},
  {image:medicines,label:"Product scope",title:"Six focused medical-supply areas.",text:"A practical product universe for wholesalers, distributors and institutions."},
  {image:nutrition,label:"How we work",title:"Manufacturer to business buyer.",text:"A straightforward commercial route for product enquiries and supply discussions."},
  {image:institutional,label:"Who we serve",title:"Built for professional purchasers.",text:"For distributors, wholesalers, institutions and procurement teams."},
