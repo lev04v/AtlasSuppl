@@ -1,6 +1,4 @@
-/* Atlas Supply — scroll-scrubbed hero.
-   Theme tokens match the light teal→purple Atlas Supply look.
-   Override any of these in your global.css if you already define them. */
+/* Atlas Supply — scroll-scrubbed hero (mobile-parity version). */
 
 :root {
   --as-ink: #101b33;
@@ -14,21 +12,22 @@
   --as-mono: "Space Mono", ui-monospace, monospace;
 }
 
-/* Tall parent = scroll runway. Keep ancestors free of overflow:hidden. */
+/* Tall parent = scroll runway. Shorter on phones so the scrub finishes
+   in a comfortable amount of thumb-scrolling. */
 .ashero {
   position: relative;
-  height: 520vh;
+  height: 340vh;
   background: var(--as-bg);
 }
 
 .ashero__pin {
   position: sticky;
   top: 0;
-  height: 100vh;
+  /* dvh avoids the mobile browser chrome resize jump */
+  height: 100svh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
-  /* Isolate paint/layout to this box so the scrub animation never
-     forces the browser to re-measure/re-paint the rest of the page. */
   contain: layout paint;
 }
 
@@ -38,21 +37,19 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
-  /* Hint the compositor to give this its own layer — avoids the video
-     frame updates repainting sibling elements. */
+  /* keep the interesting part of the frame in view on narrow screens */
+  object-position: 68% center;
   will-change: transform;
   transform: translateZ(0);
 }
 
-/* Light scrim so dark type stays readable over the video */
 .ashero__veil {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(100deg, rgba(246, 247, 251, 0.96) 0%, rgba(246, 247, 251, 0.72) 42%,
-      rgba(246, 247, 251, 0.18) 72%, rgba(246, 247, 251, 0) 100%),
-    linear-gradient(to top, rgba(246, 247, 251, 0.85) 0%, rgba(246, 247, 251, 0) 45%);
+    linear-gradient(180deg, rgba(246, 247, 251, 0.94) 0%, rgba(246, 247, 251, 0.7) 38%,
+      rgba(246, 247, 251, 0.25) 70%, rgba(246, 247, 251, 0.55) 100%);
 }
 
 .ashero__inner {
@@ -61,14 +58,12 @@
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  padding: 6rem 1.5rem;
+  padding: 4.5rem 1.25rem 5.5rem;
 }
 
 .ashero__copy {
   max-width: 46rem;
   will-change: transform, opacity;
-  /* Match the JS default (progress = 0) so there's no flash before
-     the animation script attaches. */
   opacity: 1;
   transform: translateY(0);
 }
@@ -76,17 +71,17 @@
 .ashero__eyebrow {
   margin: 0;
   font-family: var(--as-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--as-teal);
 }
 
 .ashero__title {
-  margin: 1.25rem 0 0;
+  margin: 0.9rem 0 0;
   font-family: var(--as-serif);
   font-weight: 700;
-  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-size: clamp(2.4rem, 11vw, 5.5rem);
   line-height: 0.98;
   letter-spacing: -0.02em;
   color: var(--as-ink);
@@ -102,11 +97,11 @@
 }
 
 .ashero__lead {
-  margin: 1.5rem 0 0;
+  margin: 1.1rem 0 0;
   max-width: 34rem;
   font-family: var(--as-sans);
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--as-ink-soft);
 }
 
@@ -114,17 +109,17 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
+  gap: 1rem;
+  margin-top: 1.75rem;
 }
 
 .ashero__btn {
   border: 0;
   cursor: pointer;
   border-radius: 999px;
-  padding: 0.95rem 1.75rem;
+  padding: 0.9rem 1.6rem;
   font-family: var(--as-sans);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #fff;
   background: var(--as-grad);
@@ -142,7 +137,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--as-sans);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--as-purple);
 }
@@ -152,12 +147,10 @@
 }
 
 .ashero__outro {
-  align-self: flex-end;
+  align-self: flex-start;
   max-width: 32rem;
-  text-align: right;
+  text-align: left;
   will-change: transform, opacity;
-  /* Match the JS default (progress = 0) so there's no flash before
-     the animation script attaches. */
   opacity: 0;
   transform: translateY(40px);
 }
@@ -166,25 +159,25 @@
   margin: 0;
   font-family: var(--as-serif);
   font-weight: 700;
-  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-size: clamp(1.7rem, 7vw, 3.2rem);
   line-height: 1.05;
   color: var(--as-ink);
 }
 
 .ashero__progress {
   position: absolute;
-  bottom: 2rem;
-  left: 1.5rem;
-  right: 1.5rem;
+  bottom: 1.5rem;
+  left: 1.25rem;
+  right: 1.25rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .ashero__count {
   font-family: var(--as-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
   color: var(--as-ink-soft);
 }
 
@@ -200,10 +193,34 @@
 }
 
 @media (min-width: 768px) {
+  .ashero {
+    height: 420vh;
+  }
+  .ashero__video {
+    object-position: center;
+  }
+  .ashero__veil {
+    background:
+      linear-gradient(100deg, rgba(246, 247, 251, 0.96) 0%, rgba(246, 247, 251, 0.72) 42%,
+        rgba(246, 247, 251, 0.18) 72%, rgba(246, 247, 251, 0) 100%),
+      linear-gradient(to top, rgba(246, 247, 251, 0.85) 0%, rgba(246, 247, 251, 0) 45%);
+  }
   .ashero__inner {
     padding: 6rem 3.5rem;
   }
+  .ashero__eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+  }
+  .ashero__lead {
+    font-size: 1rem;
+  }
+  .ashero__outro {
+    align-self: flex-end;
+    text-align: right;
+  }
   .ashero__progress {
+    bottom: 2rem;
     left: 3.5rem;
     right: 3.5rem;
   }
@@ -211,16 +228,34 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ashero {
-    height: 100vh;
+    height: 100svh;
   }
-  /* JS skips scrubbing in this mode and just plays the video normally,
-     so the copy/outro should show their settled (progress≈0) state
-     rather than the mid-scrub defaults above. */
   .ashero__copy {
     opacity: 1;
     transform: none;
   }
   .ashero__outro {
     opacity: 0;
+  }
+}
+
+.ashero__next {
+  position: relative;
+  background: var(--as-bg);
+  padding: 5rem 1.25rem 7rem;
+  font-family: var(--as-sans);
+  color: var(--as-ink-soft);
+}
+
+.ashero__next h2 {
+  margin: 0 0 1rem;
+  font-family: var(--as-serif);
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  color: var(--as-ink);
+}
+
+@media (min-width: 768px) {
+  .ashero__next {
+    padding: 7rem 3.5rem 9rem;
   }
 }

@@ -6,7 +6,6 @@ import Partners from "../components/Partners";
 import Reasons from "../components/Reasons";
 import Enquiry from "../components/Enquiry";
 import ContactFooter from "../components/ContactFooter";
-import heroVideo from "../assets/hero/atlas-hero-scrub.mp4";
 
 export default function Home() {
   return (
@@ -14,7 +13,6 @@ export default function Home() {
       <Header />
       <main>
         <ScrollVideoHero
-          src={heroVideo}
           onExplore={() => (window.location.href = "/products")}
           onEnquiry={() =>
             document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" })

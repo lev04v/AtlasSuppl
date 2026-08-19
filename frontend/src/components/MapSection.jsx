@@ -38,15 +38,15 @@ export default function MapSection() {
             </p>
             <p className="map-card__text">
               <Phone size={18} />
-              +91 94310 11006
+              +91 78310 77006
             </p>
             <p className="map-card__text">
               <Phone size={18} />
-              +91 94310 01455
+              +91 63310 01488
             </p>
             <p className="map-card__text">
               <Mail size={18} />
-              info@wellexypharma.com
+              info@atlessupply.com
             </p>
             <p className="map-card__text">
               <Clock size={18} />

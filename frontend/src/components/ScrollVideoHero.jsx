@@ -1,31 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ScrollVideoHero.css";
+import desktopVideo from "./atlas-hero-desktop.mp4";
+import mobileVideo from "./atlas-hero-mobile.mp4";
 
 /**
- * Porsche-style pinned hero.
- * The section is tall, the visual is sticky, and the video is scrubbed
- * frame-by-frame from scroll progress. When the video finishes, the page
- * releases into the next section.
- *
- * Perf notes (why this version is written the way it is):
- * - No React state is touched during scroll/animation. Every frame writes
- *   directly to DOM refs, so scrolling never triggers a React re-render.
- * - The rAF loop is gated by an IntersectionObserver: it only runs while
- *   the hero is near the viewport, and stops itself once it settles
- *   (instead of running forever at 60fps in the background).
- * - video.currentTime seeks are throttled with a bigger epsilon on
- *   touch/coarse-pointer devices, since mobile video decoders are much
- *   slower to seek than desktop and over-seeking is the #1 source of
- *   mobile scroll jank with this pattern.
- * - prefers-reduced-motion skips scroll-scrubbing entirely and just lets
- *   the video play normally.
- *
- * Usage:
- *   import ScrollVideoHero from "./components/ScrollVideoHero";
- *   <ScrollVideoHero src="/assets/atlas-hero-scrub.mp4" />
+ * Porsche-style pinned hero, scrubbed frame-by-frame from scroll progress.
+ * Same choreography on mobile as on desktop — it just loads a lighter,
+ * lower-resolution encode and seeks less aggressively so phone decoders
+ * keep up.
  */
 export default function ScrollVideoHero({
-  src = "/assets/atlas-hero-scrub.mp4",
   eyebrow = "B2B Medical Trade & Distribution",
   onExplore,
   onEnquiry,
@@ -37,27 +21,27 @@ export default function ScrollVideoHero({
   const countRef = useRef(null);
   const barRef = useRef(null);
 
+  // Pick the encode after hydration so SSR markup stays stable.
+  const [src, setSrc] = useState(desktopVideo);
+  useEffect(() => {
+    const small = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
+    setSrc(small ? mobileVideo : desktopVideo);
+  }, []);
+
   useEffect(() => {
     const section = sectionRef.current;
     const video = videoRef.current;
     if (!section || !video) return;
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) {
-      // No scrubbing, no rAF loop at all — just let the video play.
       video.play?.().catch(() => {});
       return;
     }
 
     const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    // Mobile decoders are slow to seek — use a looser threshold so we
-    // seek less often, and a snappier lerp so the loop settles (and can
-    // stop) faster instead of chasing target for many extra frames.
-    const SEEK_EPS = isCoarsePointer ? 0.05 : 0.015;
-    const LERP = isCoarsePointer ? 0.18 : 0.12;
+    const SEEK_EPS = isCoarsePointer ? 0.04 : 0.015;
+    const LERP = isCoarsePointer ? 0.2 : 0.12;
     const IDLE_EPS = 0.0006;
 
     const target = { p: 0 };
@@ -71,6 +55,7 @@ export default function ScrollVideoHero({
       videoReady = true;
     };
     video.addEventListener("loadedmetadata", onLoadedMetadata);
+    if (video.readyState >= 1) videoReady = true;
 
     const applyFrame = (p) => {
       const titleOut = Math.min(1, p / 0.32);
@@ -110,7 +95,7 @@ export default function ScrollVideoHero({
       if (Math.abs(target.p - current) < IDLE_EPS) {
         current = target.p;
         applyFrame(current);
-        running = false; // settled — stop looping until scroll moves again
+        running = false;
         return;
       }
 
@@ -129,11 +114,9 @@ export default function ScrollVideoHero({
       startLoop();
     };
 
-    // Only animate while the hero is actually near the viewport — once
-    // it's scrolled well past, stop touching the video/DOM entirely.
     const observer = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting;
+        visible = entry?.isIntersecting ?? false;
         if (visible) {
           measure();
           startLoop();
@@ -142,36 +125,39 @@ export default function ScrollVideoHero({
           cancelAnimationFrame(rafId);
         }
       },
-      { rootMargin: "200px 0px" }
+      { rootMargin: "200px 0px" },
     );
     observer.observe(section);
 
-    // Initial paint, before any scroll happens.
     measure();
     applyFrame(current);
     if (visible) startLoop();
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    window.addEventListener("orientationchange", onScroll);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      window.removeEventListener("orientationchange", onScroll);
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
       observer.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [src]);
 
   return (
     <section ref={sectionRef} className="ashero">
       <div className="ashero__pin">
         <video
+          key={src}
           ref={videoRef}
           className="ashero__video"
           muted
           playsInline
           preload="auto"
+          disablePictureInPicture
           aria-label="Atlas Supply molecular supply chain visual"
         >
           <source src={src} type="video/mp4" />
