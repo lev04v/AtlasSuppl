@@ -1,0 +1,201 @@
+/* Atlas Supply — scroll-scrubbed hero.
+   Theme tokens match the light teal→purple Atlas Supply look.
+   Override any of these in your global.css if you already define them. */
+
+:root {
+  --as-ink: #101b33;
+  --as-ink-soft: #4a5568;
+  --as-bg: #f6f7fb;
+  --as-teal: #10a4a8;
+  --as-purple: #6b4fe0;
+  --as-grad: linear-gradient(100deg, var(--as-teal), var(--as-purple));
+  --as-serif: "Playfair Display", "Times New Roman", serif;
+  --as-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --as-mono: "Space Mono", ui-monospace, monospace;
+}
+
+/* Tall parent = scroll runway. Keep ancestors free of overflow:hidden. */
+.ashero {
+  position: relative;
+  height: 520vh;
+  background: var(--as-bg);
+}
+
+.ashero__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ashero__video {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Light scrim so dark type stays readable over the video */
+.ashero__veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, rgba(246, 247, 251, 0.96) 0%, rgba(246, 247, 251, 0.72) 42%,
+      rgba(246, 247, 251, 0.18) 72%, rgba(246, 247, 251, 0) 100%),
+    linear-gradient(to top, rgba(246, 247, 251, 0.85) 0%, rgba(246, 247, 251, 0) 45%);
+}
+
+.ashero__inner {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6rem 1.5rem;
+}
+
+.ashero__copy {
+  max-width: 46rem;
+  will-change: transform, opacity;
+}
+
+.ashero__eyebrow {
+  margin: 0;
+  font-family: var(--as-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--as-teal);
+}
+
+.ashero__title {
+  margin: 1.25rem 0 0;
+  font-family: var(--as-serif);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  color: var(--as-ink);
+}
+
+.ashero__title em,
+.ashero__outroTitle em {
+  font-style: italic;
+  background: var(--as-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ashero__lead {
+  margin: 1.5rem 0 0;
+  max-width: 34rem;
+  font-family: var(--as-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--as-ink-soft);
+}
+
+.ashero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.ashero__btn {
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0.95rem 1.75rem;
+  font-family: var(--as-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--as-grad);
+  box-shadow: 0 12px 30px -12px rgba(107, 79, 224, 0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ashero__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -14px rgba(107, 79, 224, 0.7);
+}
+
+.ashero__link {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--as-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--as-purple);
+}
+
+.ashero__link:hover {
+  text-decoration: underline;
+}
+
+.ashero__outro {
+  align-self: flex-end;
+  max-width: 32rem;
+  text-align: right;
+  will-change: transform, opacity;
+}
+
+.ashero__outroTitle {
+  margin: 0;
+  font-family: var(--as-serif);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.05;
+  color: var(--as-ink);
+}
+
+.ashero__progress {
+  position: absolute;
+  bottom: 2rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ashero__count {
+  font-family: var(--as-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--as-ink-soft);
+}
+
+.ashero__track {
+  flex: 1;
+  height: 1px;
+  background: rgba(16, 27, 51, 0.15);
+}
+
+.ashero__bar {
+  height: 1px;
+  background: var(--as-grad);
+}
+
+@media (min-width: 768px) {
+  .ashero__inner {
+    padding: 6rem 3.5rem;
+  }
+  .ashero__progress {
+    left: 3.5rem;
+    right: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ashero {
+    height: 100vh;
+  }
+}
