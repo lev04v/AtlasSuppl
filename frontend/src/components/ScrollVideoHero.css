@@ -27,6 +27,9 @@
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  /* Isolate paint/layout to this box so the scrub animation never
+     forces the browser to re-measure/re-paint the rest of the page. */
+  contain: layout paint;
 }
 
 .ashero__video {
@@ -35,6 +38,10 @@
   height: 100%;
   width: 100%;
   object-fit: cover;
+  /* Hint the compositor to give this its own layer — avoids the video
+     frame updates repainting sibling elements. */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Light scrim so dark type stays readable over the video */
@@ -60,6 +67,10 @@
 .ashero__copy {
   max-width: 46rem;
   will-change: transform, opacity;
+  /* Match the JS default (progress = 0) so there's no flash before
+     the animation script attaches. */
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .ashero__eyebrow {
@@ -145,6 +156,10 @@
   max-width: 32rem;
   text-align: right;
   will-change: transform, opacity;
+  /* Match the JS default (progress = 0) so there's no flash before
+     the animation script attaches. */
+  opacity: 0;
+  transform: translateY(40px);
 }
 
 .ashero__outroTitle {
@@ -197,5 +212,15 @@
 @media (prefers-reduced-motion: reduce) {
   .ashero {
     height: 100vh;
+  }
+  /* JS skips scrubbing in this mode and just plays the video normally,
+     so the copy/outro should show their settled (progress≈0) state
+     rather than the mid-scrub defaults above. */
+  .ashero__copy {
+    opacity: 1;
+    transform: none;
+  }
+  .ashero__outro {
+    opacity: 0;
   }
 }
