@@ -1,0 +1,92 @@
+/* StoryCarousel enhancements — layered on top of the existing .story
+   rules in global.css. Extra specificity (.story.sc-story) so these
+   reliably win without having to touch global.css. */
+
+.story.sc-story {
+  grid-template-columns: 1.25fr 1fr;
+  transition: grid-template-columns 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.story.sc-story.sc-hovered {
+  grid-template-columns: 1.75fr 0.85fr;
+}
+
+.sc-image {
+  position: relative;
+}
+
+.sc-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.sc-slide.sc-active {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Slow Ken Burns drift on the active slide. Remounted via a key change
+   in the component so the animation restarts on every slide change. */
+.sc-slide.sc-active img {
+  animation: sc-zoom 9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sc-zoom {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.sc-hint {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 3;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(7, 26, 48, 0.55);
+  backdrop-filter: blur(6px);
+  color: #d6ecf0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.sc-hovered .sc-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 850px) {
+  /* Preserve the existing mobile stacked layout regardless of hover —
+     hover doesn't fire on touch anyway. */
+  .story.sc-story,
+  .story.sc-story.sc-hovered {
+    grid-template-columns: 1fr;
+  }
+  .sc-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story.sc-story {
+    transition: none;
+  }
+  .sc-slide {
+    transition: none;
+  }
+  .sc-slide.sc-active img {
+    animation: none;
+  }
+}
