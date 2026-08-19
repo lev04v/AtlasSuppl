@@ -53,13 +53,13 @@ export default function ContactFooter() {
             <MapPin /> Atlas Supply, New Delhi, Delhi 110001, India (placeholder address)
           </p>
           <a href="tel:+919431011006">
-            <Phone /> +91 94310 11006
+            <Phone /> +91 12310 33696
           </a>
           <a href="tel:+919431001455">
-            <Phone /> +91 94310 01455
+            <Phone /> +91 12310 08669
           </a>
           <a href="mailto:info@wellexypharma.com">
-            <Mail /> info@wellexypharma.com
+            <Mail /> info@atlassuplly.com
           </a>
         </div>
       </section>
